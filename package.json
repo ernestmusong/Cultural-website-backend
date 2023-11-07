@@ -1,0 +1,33 @@
+{
+  "name": "cultural-website-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ernestmusong/Cultural-website-backend.git"
+  },
+  "keywords": [
+    "node.js",
+    "express",
+    "jwt",
+    "authentication",
+    "mongodb"
+  ],
+  "author": "musong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ernestmusong/Cultural-website-backend/issues"
+  },
+  "homepage": "https://github.com/ernestmusong/Cultural-website-backend#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}
