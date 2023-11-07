@@ -1,10 +1,41 @@
-const config = require("../config/auth.config");
 const User = require("./models/user");
+const secret = "molomolo900*";
 
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
  
 exports.signup = (req, res) => {
+    // Username
+    User.findOne({
+      username: req.body.username
+    }).exec((err, user) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+  
+      if (user) {
+        res.status(400).send({ message: "Failed! Username is already in use!" });
+        return;
+      }
+  
+      // Email
+      User.findOne({
+        email: req.body.email
+      }).exec((err, user) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+  
+        if (user) {
+          res.status(400).send({ message: "Failed! Email is already in use!" });
+          return;
+        }
+  
+        next();
+      });
+    });
   const user = new User({
     title: req.body.title,
     firstName: req.body.firstName,
@@ -26,16 +57,22 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
- const userDoc = User.findOne({
+  User.findOne({
     username: req.body.username
   })
-      if (!userDoc) {
+    .exec((err, user) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }
 
       const passwordIsValid = bcrypt.compareSync(
         req.body.password,
-        userDoc.password
+        user.password
       );
 
       if (!passwordIsValid) {
@@ -45,19 +82,21 @@ exports.signin = (req, res) => {
         });
       }
 
-      const token = jwt.sign({ id: userDoc.id }, config.secret, {
+      const token = jwt.sign({ id: user.id }, secret, {
         expiresIn: 86400 // 24 hours
       });
+
       res.status(200).send({
-        id: userDoc._id,
-        title: userDoc.title,
-        username: userDoc.username,
-        email: userDoc.email,
+        id: user._id,
+        title: user.title,
+        username: user.username,
+        email: user.email,
         roles: authorities,
-        firstName: userDoc.firstName,
-        lastName: userDoc.lastName,
-        branch: userDoc.branch,
-        socialGroup: userDoc.socialGroup,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        branch: user.branch,
+        socialGroup: user.socialGroup,
         accessToken: token
       });
+    });
 };
