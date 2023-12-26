@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const { Schema, model } = mongoose;
 
 const User = model(
@@ -7,10 +8,9 @@ const User = model(
     title: String,
     firstName: String,
     lastName: String,
-    username: String,
+    username: {type: String, unique:true, required:true},
     email: String,
     branch: String,
-    socialGroup: String,
     password: String,
     role: String, 
   })
