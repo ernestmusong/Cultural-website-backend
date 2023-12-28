@@ -32,36 +32,30 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-  User.findOne({
-    username: req.body.username,
-  })
-    .exec((err, user) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
+  User.findOne({ username: req.body.username }).exec()
+  .then((user) => {
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    }
 
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
+    const passwordIsValid = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
 
-      const passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
-
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!"
-        });
-      }
-
-      const token = jwt.sign({ id: user._id }, config.secret, {
-        expiresIn: 86400 // 24 hours
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: "Invalid Password!"
       });
+    }
 
-      res.status(200).send({
+    const token = jwt.sign({ id: user._id }, config.secret, {
+      expiresIn: 86400 // 24 hours
+    });
+
+    res.status(200).send(
+      {
         id: user._id,
         title: user.title,
         firstName: user.firstName,
@@ -71,6 +65,10 @@ exports.signin = (req, res) => {
         branch: user.branch,
         role:user.role,
         token: token
-      });
-    });
+      }
+    );
+  })
+  .catch((err) => {
+    res.status(500).send({ message: err });
+  });
 };
