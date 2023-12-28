@@ -2,10 +2,9 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 var User = require("../models/user");
 var config = require("../config/auth.config.js");
-var verifySignUp = require("../middlewares/verifySignUp");
- 
+
 exports.signup = (req, res) => {
-  verifySignUp
+   
   const user = new User({
     title: req.body.title,
     firstName: req.body.firstName,
@@ -17,13 +16,18 @@ exports.signup = (req, res) => {
     password: bcrypt.hashSync(req.body.password, 8) // Auto gennerate a salt and hash.
   });
 
-  user.save((err) => {
-    if (err) {
+  user.save()
+  .then((result) => {
+    res.status(200).send(result);
+  })
+  .catch((err) => {
+    if (err.code === 11000 && err.keyPattern.email === 1) {
+      res.status(400).send({ message: "Failed! Email is already in use!" });
+    } else if (err.code === 11000 && err.keyPattern.username === 1) {
+      res.status(400).send({ message: "Failed! Username is already in use!" });
+    } else {
       res.status(500).send({ message: err });
-      return;
     }
-    res.send({ message: "You have been registered successfully!" });
-    res.status(200).send(user)
   });
 };
 

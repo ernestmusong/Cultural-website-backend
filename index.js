@@ -5,10 +5,10 @@ require("dotenv").config()
 const app = express();
 
 mongoose.Promise = global.Promise;
-const corsOptions = {
-    origin: "http://localhost:3000"
-   };
-app.use(cors(corsOptions));
+// const corsOptions = {
+//     origin: "http://localhost:3000"
+//    };
+// app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
 
@@ -31,7 +31,7 @@ mongoose.connect(process.env.MONGODB_CONNECTION_STRING, {
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Ernest Application." });
+  res.json({ message: "Welcome to Befang Cultural and Development Association." });
 });
 
 // routes
