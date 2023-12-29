@@ -5,10 +5,8 @@ require("dotenv").config()
 const app = express();
 
 mongoose.Promise = global.Promise;
-// const corsOptions = {
-//     origin: "http://localhost:3000"
-//    };
-// app.use(cors(corsOptions));
+ 
+app.use(cors());
 // parse requests of content-type - application/json
 app.use(express.json());
 
